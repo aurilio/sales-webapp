@@ -1,1 +1,35 @@
-<p>sale-list works!</p>
+<h2>Lista de Vendas</h2>
+
+<div *ngIf="isLoading">Carregando vendas...</div>
+<div *ngIf="errorMessage">{{ errorMessage }}</div>
+
+<table *ngIf="!isLoading && sales.length > 0">
+  <thead>
+    <tr>
+      <th>Número</th>
+      <th>Data</th>
+      <th>Cliente</th>
+      <th>Filial</th>
+      <th>Total</th>
+      <th>Cancelada?</th>
+      <th>Ações</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr *ngFor="let sale of sales">
+      <td>{{ sale.saleNumber }}</td>
+      <td>{{ sale.saleDate | date: 'shortDate' }}</td>
+      <td>{{ sale.customer }}</td>
+      <td>{{ sale.branch }}</td>
+      <td>{{ sale.totalAmount | currency:'BRL' }}</td>
+      <td>{{ sale.cancelled ? 'Sim' : 'Não' }}</td>
+      <td>
+        <a [routerLink]="['/sales', sale.id]">Detalhes</a>
+        |
+        <a [routerLink]="['/sales/edit', sale.id]">Editar</a>
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+<p *ngIf="!isLoading && sales.length === 0">Nenhuma venda encontrada.</p>
