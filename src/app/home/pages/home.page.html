@@ -1,0 +1,9 @@
+<h1>Simulação de Endpoints - Sale</h1>
+
+<div class="actions" style="display: flex; gap: 1rem; flex-wrap: wrap;">
+  <button (click)="createSale()">Criar Venda</button>
+  <button (click)="getSale()">Buscar Venda por ID</button>
+  <button (click)="updateSale()">Atualizar Venda</button>
+  <button (click)="deleteSale()">Excluir Venda</button>
+  <button [routerLink]="['/sales']">Ir para Listagem</button>
+</div>
