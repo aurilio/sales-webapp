@@ -16,7 +16,7 @@
     </tr>
   </thead>
   <tbody>
-    <tr *ngFor="let sale of sales">
+    <tr *ngFor="let sale of sales; let i = index">
       <td>{{ sale.saleNumber }}</td>
       <td>{{ sale.saleDate | date: 'shortDate' }}</td>
       <td>{{ sale.customer }}</td>
@@ -27,6 +27,7 @@
         <a [routerLink]="['/sales', sale.id]">Detalhes</a>
         |
         <a [routerLink]="['/sales/edit', sale.id]">Editar</a>
+        <button (click)="deleteSale(i)">Excluir</button>
       </td>
     </tr>
   </tbody>
