@@ -5,7 +5,7 @@ export interface SaleItem {
     unitPrice: number;
     discount: number;
     totalAmount: number;
-    cancelled: boolean;
+    //cancelled: boolean;
   }
   
   export interface Sale {

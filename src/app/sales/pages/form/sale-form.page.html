@@ -1,1 +1,66 @@
-<p>sale-form works!</p>
+<h1>{{ form.get('saleNumber')?.value ? 'Editar' : 'Nova' }} Venda</h1>
+
+<form [formGroup]="form" (ngSubmit)="save()">
+  <div>
+    <label>Número da Venda:</label>
+    <input formControlName="saleNumber" />
+  </div>
+
+  <div>
+    <label>Data:</label>
+    <input type="date" formControlName="saleDate" />
+  </div>
+
+  <div>
+    <label>Cliente:</label>
+    <input formControlName="customer" />
+  </div>
+
+  <div>
+    <label>Filial:</label>
+    <input formControlName="branch" />
+  </div>
+
+  <div>
+    <label>Cancelada:</label>
+    <input type="checkbox" formControlName="cancelled" />
+  </div>
+
+  <hr />
+
+  <h3>Itens</h3>
+  <div formArrayName="items" *ngFor="let item of items.controls; let i = index" [formGroupName]="i">
+    <div>
+      <label>Produto:</label>
+      <input formControlName="productName"/>
+    </div>
+
+    <div>
+      <label>Quantidade:</label>
+      <input type="number" formControlName="quantity" (change)="onQuantityChange(i)" />
+    </div>
+
+    <div>
+      <label>Preço Unitário:</label>
+      <input type="number" formControlName="unitPrice"/>
+    </div>
+
+    <div>
+      <label>Desconto (%):</label>
+      <input formControlName="discount"/>
+    </div>
+
+    <div>
+      <label>Total:</label>
+      <input formControlName="totalAmount"/>
+    </div>
+
+    <button type="button" (click)="removeItem(i)">Remover Item</button>
+    <hr />
+  </div>
+
+  <button type="button" (click)="addItem()">Adicionar Item</button>
+
+  <br /><br />
+  <button type="submit">Salvar</button>
+</form>

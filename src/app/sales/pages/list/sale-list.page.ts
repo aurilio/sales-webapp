@@ -68,4 +68,15 @@ export class SaleListPage implements OnInit {
     this.isLoading = false;
     console.error(error);
   }
+
+  deleteSale(index: number): void {
+    const sale = this.sales[index];
+  
+    const confirmDelete = confirm(`Deseja realmente excluir a venda ${sale.saleNumber}?`);
+    if (!confirmDelete) return;
+  
+    // Simulando exclusão do array
+    this.sales.splice(index, 1);
+    console.log(`🗑️ Venda ${sale.saleNumber} excluída com sucesso (mock)`);
+  }
 }

@@ -1,1 +1,22 @@
-<p>sale-details works!</p>
+<h1>Detalhes da Venda</h1>
+
+<div *ngIf="sale; else notFound">
+  <p><strong>Número:</strong> {{ sale.saleNumber }}</p>
+  <p><strong>Data:</strong> {{ sale.saleDate | date }}</p>
+  <p><strong>Cliente:</strong> {{ sale.customer }}</p>
+  <p><strong>Filial:</strong> {{ sale.branch }}</p>
+  <p><strong>Total:</strong> R$ {{ sale.totalAmount }}</p>
+  <p><strong>Status:</strong> {{ sale.cancelled ? 'Cancelada' : 'Ativa' }}</p>
+
+  <h3>Itens:</h3>
+  <ul>
+    <li *ngFor="let item of sale.items">
+      {{ item.productName }} - {{ item.quantity }} x R$ {{ item.unitPrice }}  
+      (Desconto: {{ item.discount }}%) = R$ {{ item.totalAmount }}
+    </li>
+  </ul>
+</div>
+
+<ng-template #notFound>
+  <p>Venda não encontrada.</p>
+</ng-template>
