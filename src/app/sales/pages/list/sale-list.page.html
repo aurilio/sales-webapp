@@ -2,6 +2,8 @@
 
 <app-back-to-home-button></app-back-to-home-button>
 
+<app-sale-filters (filtersChanged)="onFiltersChanged($event)"></app-sale-filters>
+
 <div *ngIf="isLoading">
   <p>🔄 Carregando vendas...</p>
 </div>
@@ -43,7 +45,6 @@
   </tbody>
 </table>
 
-<!-- Paginação -->
 <div *ngIf="!isLoading && totalPages > 1" style="margin-top: 1rem; display: flex; justify-content: center; gap: 1rem;">
   <button (click)="previousPage()" [disabled]="currentPage === 1">⬅️ Anterior</button>
   <span>Página {{ currentPage }} de {{ totalPages }}</span>
