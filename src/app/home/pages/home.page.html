@@ -1,0 +1,13 @@
+<h1>Simulação de Endpoints - Sale</h1>
+
+<div class="actions" style="display: flex; flex-direction: column; gap: 1rem; max-width: 300px;">
+  <button (click)="createSale()">Criar Venda</button>
+
+  <div>
+    <label for="saleId">Buscar Venda por ID:</label>
+    <input id="saleId" type="text" [(ngModel)]="saleId" placeholder="Informe o ID" style="width: 100%;" />
+    <button (click)="getSale()" style="margin-top: 0.5rem;">Buscar</button>
+  </div>
+
+  <button (click)="goToList()">Listar vendas</button>
+</div>
