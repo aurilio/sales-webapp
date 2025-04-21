@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
-import { of } from 'rxjs';
+import { BackToHomeButtonComponent } from '../../../shared/components/back-to-home-button.component';
 
 import { Sale } from '../../models/sale.model';
 import { SaleService } from '../../services/sale.service';
@@ -9,7 +9,7 @@ import { SaleService } from '../../services/sale.service';
 @Component({
   selector: 'app-sale-list',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, BackToHomeButtonComponent],
   templateUrl: './sale-list.page.html',
   styleUrls: ['./sale-list.page.scss']
 })
@@ -63,11 +63,11 @@ export class SaleListPage implements OnInit {
     this.saleService.delete(id).subscribe({
       next: () => {
         this.sales = this.sales.filter(s => s.id !== id);
-        console.log('🟢 Venda excluída com sucesso');
+        console.log('Venda excluída com sucesso');
       },
       error: err => {
         this.errorMessage = 'Erro ao excluir a venda.';
-        console.error('🔴 Erro ao excluir:', err);
+        console.error('Erro ao excluir:', err);
       }
     });
   }

@@ -1,5 +1,7 @@
 <h1>{{ isEditMode ? 'Editar' : 'Nova' }} Venda</h1>
 
+<app-back-to-home-button></app-back-to-home-button>
+
 <form [formGroup]="form" (ngSubmit)="save()">
   <div>
     <label>Número da Venda:</label>
@@ -15,13 +17,18 @@
     <label>Cliente (ID):</label>
     <input formControlName="customerId" />
   </div>
+  
+  <div>
+    <label>Nome do Cliente:</label>
+    <input formControlName="customerName" />
+  </div>
 
   <div>
     <label>Filial:</label>
     <input formControlName="branch" />
   </div>
 
-  <div>
+  <div *ngIf="isEditMode">
     <label>Cancelada:</label>
     <input type="checkbox" formControlName="isCancelled" />
   </div>
@@ -29,74 +36,16 @@
   <hr />
 
   <h3>Itens da Venda</h3>
-  <div
-    formArrayName="items"
-    *ngFor="let item of items.controls; let i = index"
-    [formGroupName]="i"
-  >
-    <div>
-      <label>Produto (ID):</label>
-      <input formControlName="productId" />
-    </div>
-
-    <div>
-      <label>Quantidade:</label>
-      <input
-        type="number"
-        formControlName="quantity"
-        (change)="onQuantityChange(i)"
-      />
-    </div>
-
-    <div>
-      <label>Preço Unitário:</label>
-      <input type="number" formControlName="unitPrice" />
-    </div>
-
-    <div>
-      <label>Desconto (%):</label>
-      <input type="number" formControlName="discount" />
-    </div>
-
-    <div>
-      <label>Total:</label>
-      <input type="number" formControlName="totalAmount" />
-    </div>
-
-    <!-- Detalhes do Produto -->
-    <fieldset formGroupName="productDetails">
-      <legend>Detalhes do Produto</legend>
-
-      <div>
-        <label>Nome:</label>
-        <input formControlName="title" />
+  <div formArrayName="items">
+    <ng-container *ngFor="let item of items; let i = index">
+      <div *ngIf="item instanceof FormGroup">
+        <app-sale-item-form
+          [item]="item"
+          [index]="i"
+          (remove)="removeItem($event)">
+        </app-sale-item-form>
       </div>
-
-      <div>
-        <label>Descrição:</label>
-        <input formControlName="description" />
-      </div>
-
-      <div>
-        <label>Categoria:</label>
-        <input formControlName="category" />
-      </div>
-
-      <div>
-        <label>Imagem:</label>
-        <input formControlName="image" />
-      </div>
-
-      <div formGroupName="rating">
-        <label>Nota:</label>
-        <input type="number" formControlName="rate" />
-        <label>Votos:</label>
-        <input type="number" formControlName="count" />
-      </div>
-    </fieldset>
-
-    <button type="button" (click)="removeItem(i)">Remover Item</button>
-    <hr />
+    </ng-container>
   </div>
 
   <button type="button" (click)="addItem()">Adicionar Item</button>

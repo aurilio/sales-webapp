@@ -4,11 +4,12 @@ import { ActivatedRoute } from '@angular/router';
 import { SaleService } from '../../services/sale.service';
 import { Sale } from '../../models/sale.model';
 import { RouterModule } from '@angular/router';
+import { BackToHomeButtonComponent } from '../../../shared/components/back-to-home-button.component';
 
 @Component({
   selector: 'app-sale-details',
   standalone: true,
-  imports: [CommonModule, RouterModule],
+  imports: [CommonModule, RouterModule, BackToHomeButtonComponent],
   templateUrl: './sale-details.page.html',
   styleUrls: ['./sale-details.page.scss']
 })

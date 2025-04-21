@@ -8,13 +8,25 @@ import {
   ReactiveFormsModule
 } from '@angular/forms';
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { Observable } from 'rxjs';
+
 import { SaleService } from '../../services/sale.service';
 import { Sale } from '../../models/sale.model';
+import { UpdateSaleRequest } from '../../models/update-sale-request.model';
+import { CreateSaleRequest } from '../../models/create-sale-request.model';
+import { SaleItemFormComponent } from '../../components/sale-item-form.component';
+import { BackToHomeButtonComponent } from '../../../shared/components/back-to-home-button.component';
 
 @Component({
   selector: 'app-sale-form',
   standalone: true,
-  imports: [CommonModule, ReactiveFormsModule, RouterModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    RouterModule,
+    SaleItemFormComponent,
+    BackToHomeButtonComponent
+  ],
   templateUrl: './sale-form.page.html',
   styleUrls: ['./sale-form.page.scss']
 })
@@ -48,14 +60,19 @@ export class SaleFormPage implements OnInit {
       saleNumber: ['', Validators.required],
       saleDate: ['', Validators.required],
       customerId: ['', Validators.required],
+      customerName: [''],
       branch: ['', Validators.required],
       isCancelled: [false],
       items: this.fb.array([])
     });
   }
 
-  get items(): FormArray {
+  get itemsArray(): FormArray {
     return this.form.get('items') as FormArray;
+  }
+
+  get items(): FormGroup[] {
+    return this.itemsArray.controls as FormGroup[];
   }
 
   private loadSale(id: string): void {
@@ -65,6 +82,7 @@ export class SaleFormPage implements OnInit {
           saleNumber: sale.saleNumber,
           saleDate: sale.saleDate.substring(0, 10),
           customerId: sale.customerId,
+          customerName: sale.customerName,
           branch: sale.branch,
           isCancelled: sale.isCancelled
         });
@@ -73,27 +91,19 @@ export class SaleFormPage implements OnInit {
           const itemForm = this.fb.group({
             productId: [item.productId],
             quantity: [item.quantity],
-            unitPrice: [{ value: item.unitPrice, disabled: true }],
-            discount: [{ value: item.discount, disabled: true }],
-            totalAmount: [{ value: item.totalAmount, disabled: true }],
             productDetails: this.fb.group({
               title: [item.productDetails.title],
-              price: [item.productDetails.price],
-              description: [item.productDetails.description],
               category: [item.productDetails.category],
-              image: [item.productDetails.image],
-              rating: this.fb.group({
-                rate: [item.productDetails.rating.rate],
-                count: [item.productDetails.rating.count]
-              })
+              price: [item.productDetails.price],
+              image: [item.productDetails.image]
             })
           });
 
-          this.items.push(itemForm);
+          this.itemsArray.push(itemForm);
         });
       },
       error: err => {
-        console.error('🔴 Erro ao carregar venda:', err);
+        console.error('Erro ao carregar venda:', err);
       }
     });
   }
@@ -102,47 +112,19 @@ export class SaleFormPage implements OnInit {
     const itemForm = this.fb.group({
       productId: ['', Validators.required],
       quantity: [1, [Validators.required, Validators.min(1), Validators.max(20)]],
-      unitPrice: [{ value: 0, disabled: true }],
-      discount: [{ value: 0, disabled: true }],
-      totalAmount: [{ value: 0, disabled: true }],
       productDetails: this.fb.group({
         title: [''],
-        price: [0],
-        description: [''],
         category: [''],
-        image: [''],
-        rating: this.fb.group({
-          rate: [0],
-          count: [0]
-        })
+        price: [0],
+        image: ['']
       })
     });
 
-    this.items.push(itemForm);
+    this.itemsArray.push(itemForm);
   }
 
   removeItem(index: number): void {
-    this.items.removeAt(index);
-  }
-
-  onQuantityChange(index: number): void {
-    const item = this.items.at(index);
-    const quantity = item.get('quantity')?.value;
-    const unitPrice = item.get('unitPrice')?.value;
-
-    let discount = 0;
-    if (quantity >= 10 && quantity <= 20) {
-      discount = 0.2;
-    } else if (quantity >= 4 && quantity < 10) {
-      discount = 0.1;
-    }
-
-    const total = quantity * unitPrice * (1 - discount);
-
-    item.patchValue({
-      discount: discount * 100,
-      totalAmount: total
-    });
+    this.itemsArray.removeAt(index);
   }
 
   save(): void {
@@ -152,31 +134,38 @@ export class SaleFormPage implements OnInit {
     }
 
     const raw = this.form.getRawValue();
-    const totalAmount = raw.items.reduce(
-      (sum: number, item: any) => sum + item.totalAmount,
-      0
-    );
+    let request$: Observable<any>;
 
-    const sale: Sale = {
-      id: this.saleId,
-      ...raw,
-      totalAmount,
-      customerName: '',
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString()
-    };
-
-    const request$ = this.isEditMode
-      ? this.saleService.update(this.saleId, sale)
-      : this.saleService.create(sale);
+    if (this.isEditMode) {
+      const updateSale: UpdateSaleRequest = {
+        saleNumber: raw.saleNumber,
+        saleDate: raw.saleDate,
+        customerId: raw.customerId,
+        customerName: raw.customerName,
+        branch: raw.branch,
+        items: raw.items,
+        isCancelled: raw.isCancelled
+      };
+      request$ = this.saleService.update(this.saleId, updateSale);
+    } else {
+      const createSale: CreateSaleRequest = {
+        saleNumber: raw.saleNumber,
+        saleDate: raw.saleDate,
+        customerId: raw.customerId,
+        customerName: raw.customerName,
+        branch: raw.branch,
+        items: raw.items
+      };
+      request$ = this.saleService.create(createSale);
+    }
 
     request$.subscribe({
       next: () => {
-        console.log('🟢 Venda salva com sucesso');
+        console.log('Venda salva com sucesso');
         this.router.navigate(['/sales']);
       },
       error: err => {
-        console.error('🔴 Erro ao salvar venda:', err);
+        console.error('Erro ao salvar venda:', err);
       }
     });
   }

@@ -1,5 +1,7 @@
 <h1>Listagem de Vendas</h1>
 
+<app-back-to-home-button></app-back-to-home-button>
+
 <div *ngIf="isLoading">
   <p>🔄 Carregando vendas...</p>
 </div>
@@ -33,7 +35,7 @@
       <td>{{ sale.totalAmount | number:'1.2-2' }}</td>
       <td>{{ sale.isCancelled ? 'Cancelada' : 'Ativa' }}</td>
       <td>
-        <button [routerLink]="['/sales', sale.id]">Detalhes</button>
+        <button [routerLink]="['/sales/details', sale.id]">Detalhes</button>
         <button [routerLink]="['/sales/edit', sale.id]">Editar</button>
         <button (click)="deleteSale(sale.id)">Excluir</button>
       </td>
