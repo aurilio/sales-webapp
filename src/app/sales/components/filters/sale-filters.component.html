@@ -1,0 +1,61 @@
+<h3>Filtros</h3>
+
+<div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
+  <div>
+    <label for="customerName">Cliente</label><br />
+    <input
+      id="customerName"
+      type="text"
+      [(ngModel)]="customerName"
+      placeholder="Nome do cliente"
+    />
+  </div>
+
+  <div>
+    <label for="branch">Filial</label><br />
+    <input
+      id="branch"
+      type="text"
+      [(ngModel)]="branch"
+      placeholder="Filial"
+    />
+  </div>
+
+  <div>
+    <label for="minAmount">Valor Mínimo (R$)</label><br />
+    <input
+      id="minAmount"
+      type="number"
+      [(ngModel)]="minTotalAmount"
+      placeholder="Ex: 100"
+      min="0"
+      step="0.01"
+    />
+  </div>
+
+  <div>
+    <label for="maxAmount">Valor Máximo (R$)</label><br />
+    <input
+      id="maxAmount"
+      type="number"
+      [(ngModel)]="maxTotalAmount"
+      placeholder="Ex: 500"
+      min="0"
+      step="0.01"
+    />
+  </div>
+
+  <div>
+    <label for="isCancelled">Status</label><br />
+    <select id="isCancelled" [(ngModel)]="isCancelled">
+      <option value="">Todos</option>
+      <option value="true">Cancelada</option>
+      <option value="false">Ativa</option>
+    </select>
+  </div>
+</div>
+
+<div style="display: flex; gap: 1rem;">
+  <button (click)="applyFilters()">🔎 Aplicar Filtros</button>
+  <button (click)="clearFilters()">🧹 Limpar Filtros</button>
+</div>
