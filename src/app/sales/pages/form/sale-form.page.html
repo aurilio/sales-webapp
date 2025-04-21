@@ -28,7 +28,7 @@
     <input formControlName="branch" />
   </div>
 
-  <div>
+  <div *ngIf="isEditMode">
     <label>Cancelada:</label>
     <input type="checkbox" formControlName="isCancelled" />
   </div>
