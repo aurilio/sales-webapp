@@ -1,20 +1,31 @@
 // src/app/sales/services/sale.service.ts
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Sale } from '../models/sale.model';
 import { Observable } from 'rxjs';
+
+import { Sale } from '../models/sale.model';
+import { PaginatedResponse } from '../../shared/models/paginated-response.model';
+import { environment } from '../../../environments/environment';
+import { buildQueryParams } from '../../core/utils/query-params.util';
 
 @Injectable({
   providedIn: 'root'
 })
 export class SaleService {
-  private readonly baseUrl = 'http://localhost:8080/sales';
+  private readonly baseUrl = `${environment.apiUrl}/sales`;
 
   constructor(private http: HttpClient) {}
 
-  getAll(): Observable<Sale[]> {
-    return this.http.get<Sale[]>(this.baseUrl);
+  getAll(
+    page: number = 1,
+    size: number = 10,
+    filters: { [key: string]: string } = {},
+    orderBy?: string
+  ): Observable<PaginatedResponse<Sale>> {
+    const params = buildQueryParams(page, size, filters, orderBy);
+    return this.http.get<PaginatedResponse<Sale>>(`${this.baseUrl}`, { params });
   }
+  
 
   getById(id: string): Observable<Sale> {
     return this.http.get<Sale>(`${this.baseUrl}/${id}`);

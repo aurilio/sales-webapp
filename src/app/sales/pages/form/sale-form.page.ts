@@ -1,7 +1,14 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { ReactiveFormsModule, FormBuilder, FormGroup, FormArray, Validators } from '@angular/forms';
-import { ActivatedRoute, RouterModule } from '@angular/router';
+import {
+  FormBuilder,
+  FormGroup,
+  FormArray,
+  Validators,
+  ReactiveFormsModule
+} from '@angular/forms';
+import { ActivatedRoute, Router, RouterModule } from '@angular/router';
+import { SaleService } from '../../services/sale.service';
 import { Sale } from '../../models/sale.model';
 
 @Component({
@@ -13,10 +20,14 @@ import { Sale } from '../../models/sale.model';
 })
 export class SaleFormPage implements OnInit {
   form!: FormGroup;
+  isEditMode = false;
+  saleId: string = '';
 
   constructor(
     private fb: FormBuilder,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
+    private saleService: SaleService
   ) {}
 
   ngOnInit(): void {
@@ -24,9 +35,11 @@ export class SaleFormPage implements OnInit {
 
     const id = this.route.snapshot.paramMap.get('id');
     if (id) {
-      this.loadMockSaleById(id);
+      this.isEditMode = true;
+      this.saleId = id;
+      this.loadSale(id);
     } else {
-      this.addItem(); // nova venda
+      this.addItem();
     }
   }
 
@@ -34,9 +47,9 @@ export class SaleFormPage implements OnInit {
     this.form = this.fb.group({
       saleNumber: ['', Validators.required],
       saleDate: ['', Validators.required],
-      customer: ['', Validators.required],
+      customerId: ['', Validators.required],
       branch: ['', Validators.required],
-      cancelled: [false],
+      isCancelled: [false],
       items: this.fb.array([])
     });
   }
@@ -45,14 +58,64 @@ export class SaleFormPage implements OnInit {
     return this.form.get('items') as FormArray;
   }
 
+  private loadSale(id: string): void {
+    this.saleService.getById(id).subscribe({
+      next: (sale: Sale) => {
+        this.form.patchValue({
+          saleNumber: sale.saleNumber,
+          saleDate: sale.saleDate.substring(0, 10),
+          customerId: sale.customerId,
+          branch: sale.branch,
+          isCancelled: sale.isCancelled
+        });
+
+        sale.items.forEach(item => {
+          const itemForm = this.fb.group({
+            productId: [item.productId],
+            quantity: [item.quantity],
+            unitPrice: [{ value: item.unitPrice, disabled: true }],
+            discount: [{ value: item.discount, disabled: true }],
+            totalAmount: [{ value: item.totalAmount, disabled: true }],
+            productDetails: this.fb.group({
+              title: [item.productDetails.title],
+              price: [item.productDetails.price],
+              description: [item.productDetails.description],
+              category: [item.productDetails.category],
+              image: [item.productDetails.image],
+              rating: this.fb.group({
+                rate: [item.productDetails.rating.rate],
+                count: [item.productDetails.rating.count]
+              })
+            })
+          });
+
+          this.items.push(itemForm);
+        });
+      },
+      error: err => {
+        console.error('🔴 Erro ao carregar venda:', err);
+      }
+    });
+  }
+
   addItem(): void {
     const itemForm = this.fb.group({
-      productId: ['PROD-001', Validators.required],
-      productName: ['Produto Exemplo'],
+      productId: ['', Validators.required],
       quantity: [1, [Validators.required, Validators.min(1), Validators.max(20)]],
-      unitPrice: [{ value: 100, disabled: true }],
+      unitPrice: [{ value: 0, disabled: true }],
       discount: [{ value: 0, disabled: true }],
-      totalAmount: [{ value: 0, disabled: true }]
+      totalAmount: [{ value: 0, disabled: true }],
+      productDetails: this.fb.group({
+        title: [''],
+        price: [0],
+        description: [''],
+        category: [''],
+        image: [''],
+        rating: this.fb.group({
+          rate: [0],
+          count: [0]
+        })
+      })
     });
 
     this.items.push(itemForm);
@@ -64,8 +127,8 @@ export class SaleFormPage implements OnInit {
 
   onQuantityChange(index: number): void {
     const item = this.items.at(index);
-    const quantity = item.get('quantity')!.value;
-    const unitPrice = item.get('unitPrice')!.value;
+    const quantity = item.get('quantity')?.value;
+    const unitPrice = item.get('unitPrice')?.value;
 
     let discount = 0;
     if (quantity >= 10 && quantity <= 20) {
@@ -77,59 +140,8 @@ export class SaleFormPage implements OnInit {
     const total = quantity * unitPrice * (1 - discount);
 
     item.patchValue({
-      discount: discount * 100, // em %
+      discount: discount * 100,
       totalAmount: total
-    });
-  }
-
-  private loadMockSaleById(id: string): void {
-    const mockSales: Sale[] = [
-      {
-        id: '1',
-        saleNumber: 'VEN-001',
-        saleDate: '2024-04-01T00:00:00Z',
-        customer: 'Cliente 1',
-        branch: 'Filial A',
-        totalAmount: 1500,
-        cancelled: false,
-        items: [
-          {
-            productId: 'PROD-001',
-            productName: 'Produto 1',
-            quantity: 5,
-            unitPrice: 100,
-            discount: 10,
-            totalAmount: 450
-          }
-        ]
-      }
-    ];
-
-    const sale = mockSales.find(s => s.id === id);
-    if (!sale) {
-      console.warn('Venda não encontrada');
-      return;
-    }
-
-    this.form.patchValue({
-      saleNumber: sale.saleNumber,
-      saleDate: sale.saleDate.substring(0, 10),
-      customer: sale.customer,
-      branch: sale.branch,
-      cancelled: sale.cancelled
-    });
-
-    sale.items.forEach(item => {
-      const itemForm = this.fb.group({
-        productId: [item.productId],
-        productName: [item.productName],
-        quantity: [item.quantity],
-        unitPrice: [{ value: item.unitPrice, disabled: true }],
-        discount: [{ value: item.discount, disabled: true }],
-        totalAmount: [{ value: item.totalAmount, disabled: true }]
-      });
-
-      this.items.push(itemForm);
     });
   }
 
@@ -139,15 +151,33 @@ export class SaleFormPage implements OnInit {
       return;
     }
 
+    const raw = this.form.getRawValue();
+    const totalAmount = raw.items.reduce(
+      (sum: number, item: any) => sum + item.totalAmount,
+      0
+    );
+
     const sale: Sale = {
-      id: '',
-      ...this.form.value,
-      totalAmount: this.form.value.items.reduce(
-        (sum: number, item: any) => sum + item.totalAmount,
-        0
-      )
+      id: this.saleId,
+      ...raw,
+      totalAmount,
+      customerName: '',
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString()
     };
 
-    console.log('🟢 Venda salva (mock):', sale);
+    const request$ = this.isEditMode
+      ? this.saleService.update(this.saleId, sale)
+      : this.saleService.create(sale);
+
+    request$.subscribe({
+      next: () => {
+        console.log('🟢 Venda salva com sucesso');
+        this.router.navigate(['/sales']);
+      },
+      error: err => {
+        console.error('🔴 Erro ao salvar venda:', err);
+      }
+    });
   }
 }

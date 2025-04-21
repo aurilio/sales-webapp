@@ -1,17 +1,26 @@
-<h2>Lista de Vendas</h2>
+<h1>Listagem de Vendas</h1>
 
-<div *ngIf="isLoading">Carregando vendas...</div>
-<div *ngIf="errorMessage">{{ errorMessage }}</div>
+<div *ngIf="isLoading">
+  <p>🔄 Carregando vendas...</p>
+</div>
 
-<table *ngIf="!isLoading && sales.length > 0">
+<div *ngIf="!isLoading && errorMessage">
+  <p style="color: red;">❌ {{ errorMessage }}</p>
+</div>
+
+<div *ngIf="!isLoading && sales.length === 0 && !errorMessage">
+  <p>Nenhuma venda encontrada.</p>
+</div>
+
+<table *ngIf="!isLoading && sales.length > 0" border="1" cellspacing="0" cellpadding="8" style="width: 100%; margin-top: 1rem;">
   <thead>
     <tr>
       <th>Número</th>
       <th>Data</th>
       <th>Cliente</th>
       <th>Filial</th>
-      <th>Total</th>
-      <th>Cancelada?</th>
+      <th>Total (R$)</th>
+      <th>Status</th>
       <th>Ações</th>
     </tr>
   </thead>
@@ -19,18 +28,22 @@
     <tr *ngFor="let sale of sales; let i = index">
       <td>{{ sale.saleNumber }}</td>
       <td>{{ sale.saleDate | date: 'shortDate' }}</td>
-      <td>{{ sale.customer }}</td>
+      <td>{{ sale.customerName }}</td>
       <td>{{ sale.branch }}</td>
-      <td>{{ sale.totalAmount | currency:'BRL' }}</td>
-      <td>{{ sale.cancelled ? 'Sim' : 'Não' }}</td>
+      <td>{{ sale.totalAmount | number:'1.2-2' }}</td>
+      <td>{{ sale.isCancelled ? 'Cancelada' : 'Ativa' }}</td>
       <td>
-        <a [routerLink]="['/sales', sale.id]">Detalhes</a>
-        |
-        <a [routerLink]="['/sales/edit', sale.id]">Editar</a>
-        <button (click)="deleteSale(i)">Excluir</button>
+        <button [routerLink]="['/sales', sale.id]">Detalhes</button>
+        <button [routerLink]="['/sales/edit', sale.id]">Editar</button>
+        <button (click)="deleteSale(sale.id)">Excluir</button>
       </td>
     </tr>
   </tbody>
 </table>
 
-<p *ngIf="!isLoading && sales.length === 0">Nenhuma venda encontrada.</p>
+<!-- Paginação -->
+<div *ngIf="!isLoading && totalPages > 1" style="margin-top: 1rem; display: flex; justify-content: center; gap: 1rem;">
+  <button (click)="previousPage()" [disabled]="currentPage === 1">⬅️ Anterior</button>
+  <span>Página {{ currentPage }} de {{ totalPages }}</span>
+  <button (click)="nextPage()" [disabled]="currentPage === totalPages">Próxima ➡️</button>
+</div>

@@ -17,66 +17,58 @@ export class SaleListPage implements OnInit {
   sales: Sale[] = [];
   isLoading = true;
   errorMessage = '';
-
+  currentPage = 1;
+  totalPages = 1;
+  
   constructor(private saleService: SaleService) {}
 
   ngOnInit(): void {
-    this.loadMockSales();
+    this.loadSales();
   }
-  
-  private loadMockSales(): void {
-    const mockSales = this.buildMockSales();
-  
-    of(mockSales).subscribe({
-      next: (data) => this.handleSuccess(data),
-      error: (error) => this.handleError(error)
+  loadSales(): void {
+    this.isLoading = true;
+    this.saleService.getAll(this.currentPage).subscribe({
+      next: (response) => {
+        this.sales = response.data;
+        this.totalPages = response.totalPages;
+        this.currentPage = response.currentPage;
+        this.isLoading = false;
+      },
+      error: (error) => {
+        this.errorMessage = 'Erro ao carregar as vendas.';
+        this.isLoading = false;
+        console.error(error);
+      }
     });
   }
-  
-  private buildMockSales(): Sale[] {
-    return [
-      {
-        id: '1',
-        saleNumber: 'VEN-001',
-        saleDate: '2024-04-01T00:00:00Z',
-        customer: 'Cliente 1',
-        branch: 'Filial A',
-        totalAmount: 1500,
-        cancelled: false,
-        items: []
-      },
-      {
-        id: '2',
-        saleNumber: 'VEN-002',
-        saleDate: '2024-04-05T00:00:00Z',
-        customer: 'Cliente 2',
-        branch: 'Filial B',
-        totalAmount: 875.50,
-        cancelled: true,
-        items: []
-      }
-    ];
+
+  previousPage(): void {
+    if (this.currentPage > 1) {
+      this.currentPage--;
+      this.loadSales();
+    }
   }
   
-  private handleSuccess(data: Sale[]): void {
-    this.sales = data;
-    this.isLoading = false;
-  }
-  
-  private handleError(error: unknown): void {
-    this.errorMessage = 'Erro ao carregar as vendas.';
-    this.isLoading = false;
-    console.error(error);
+  nextPage(): void {
+    if (this.currentPage < this.totalPages) {
+      this.currentPage++;
+      this.loadSales();
+    }
   }
 
-  deleteSale(index: number): void {
-    const sale = this.sales[index];
-  
-    const confirmDelete = confirm(`Deseja realmente excluir a venda ${sale.saleNumber}?`);
+  deleteSale(id: string): void {
+    const confirmDelete = confirm('Deseja excluir esta venda?');
     if (!confirmDelete) return;
   
-    // Simulando exclusão do array
-    this.sales.splice(index, 1);
-    console.log(`🗑️ Venda ${sale.saleNumber} excluída com sucesso (mock)`);
+    this.saleService.delete(id).subscribe({
+      next: () => {
+        this.sales = this.sales.filter(s => s.id !== id);
+        console.log('🟢 Venda excluída com sucesso');
+      },
+      error: err => {
+        this.errorMessage = 'Erro ao excluir a venda.';
+        console.error('🔴 Erro ao excluir:', err);
+      }
+    });
   }
 }

@@ -1,22 +1,32 @@
 <h1>Detalhes da Venda</h1>
 
-<div *ngIf="sale; else notFound">
-  <p><strong>Número:</strong> {{ sale.saleNumber }}</p>
-  <p><strong>Data:</strong> {{ sale.saleDate | date }}</p>
-  <p><strong>Cliente:</strong> {{ sale.customer }}</p>
-  <p><strong>Filial:</strong> {{ sale.branch }}</p>
-  <p><strong>Total:</strong> R$ {{ sale.totalAmount }}</p>
-  <p><strong>Status:</strong> {{ sale.cancelled ? 'Cancelada' : 'Ativa' }}</p>
+<div *ngIf="isLoading">Carregando...</div>
+<div *ngIf="errorMessage">{{ errorMessage }}</div>
 
-  <h3>Itens:</h3>
+<div *ngIf="sale">
+  <h2>Venda: {{ sale.saleNumber }}</h2>
+  <p><strong>Data:</strong> {{ sale.saleDate | date }}</p>
+  <p><strong>Cliente:</strong> {{ sale.customerName }}</p>
+  <p><strong>Filial:</strong> {{ sale.branch }}</p>
+  <p><strong>Cancelada:</strong> {{ sale.isCancelled ? 'Sim' : 'Não' }}</p>
+  <p><strong>Total:</strong> R$ {{ sale.totalAmount | number: '1.2-2' }}</p>
+  <p><strong>Criada em:</strong> {{ sale.createdAt | date:'short' }}</p>
+  <p *ngIf="sale.updatedAt"><strong>Atualizada em:</strong> {{ sale.updatedAt | date:'short' }}</p>
+
+  <hr />
+  <h3>Itens</h3>
   <ul>
     <li *ngFor="let item of sale.items">
-      {{ item.productName }} - {{ item.quantity }} x R$ {{ item.unitPrice }}  
-      (Desconto: {{ item.discount }}%) = R$ {{ item.totalAmount }}
+      <strong>{{ item.productDetails.title }}</strong>
+      <br />
+      Quantidade: {{ item.quantity }},
+      Preço: R$ {{ item.unitPrice }},
+      Desconto: {{ item.discount }}%,
+      Total: R$ {{ item.totalAmount }},
+      <br />
+      Produto: {{ item.productDetails.description }},
+      Categoria: {{ item.productDetails.category }},
+      Avaliação: {{ item.productDetails.rating.rate }} ({{ item.productDetails.rating.count }} votos)
     </li>
   </ul>
 </div>
-
-<ng-template #notFound>
-  <p>Venda não encontrada.</p>
-</ng-template>
