@@ -1,0 +1,66 @@
+<mat-card>
+  <mat-card-title class="form-title">{{ isEditMode ? 'Editar' : 'Nova' }} Venda</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="save()" class="sale-form">
+      <div class="form-grid">
+        <mat-form-field appearance="fill">
+          <mat-label>Número da Venda</mat-label>
+          <input matInput formControlName="saleNumber" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Data da Venda</mat-label>
+          <input matInput type="date" formControlName="saleDate" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Cliente (ID)</mat-label>
+          <input matInput formControlName="customerId" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Nome do Cliente</mat-label>
+          <input matInput formControlName="customerName" />
+        </mat-form-field>
+
+        <mat-form-field appearance="fill">
+          <mat-label>Filial</mat-label>
+          <input matInput formControlName="branch" />
+        </mat-form-field>
+
+        <mat-checkbox *ngIf="isEditMode" formControlName="isCancelled">
+          Cancelada
+        </mat-checkbox>
+      </div>
+
+      <mat-card-title class="form-title">Itens da Venda</mat-card-title>
+
+      <div formArrayName="items" class="items-container">
+        <ng-container *ngFor="let item of items; let i = index">
+          <div *ngIf="item instanceof FormGroup">
+            <app-sale-item-form
+              [item]="item"
+              [index]="i"
+              (remove)="removeItem($event)">
+            </app-sale-item-form>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="actions">
+        <button mat-button type="button" color="primary" (click)="addItem()">
+          ➕ Adicionar Item
+        </button>
+      </div>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" type="submit">
+          {{ isEditMode ? 'Atualizar' : 'Salvar' }}
+        </button>
+        <button mat-button type="button" (click)="cancel()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>

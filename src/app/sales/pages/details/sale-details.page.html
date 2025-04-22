@@ -1,0 +1,47 @@
+<mat-card>
+  <mat-card-title>Detalhes da Venda</mat-card-title>
+  <mat-divider></mat-divider>
+
+  <div *ngIf="errorMessage" style="color: red; margin-top: 1rem;">
+    {{ errorMessage }}
+  </div>
+
+  <div *ngIf="sale" class="sale-details">
+    <div class="sale-info">
+      <p><strong>Número:</strong> {{ sale.saleNumber }}</p>
+      <p><strong>Data:</strong> {{ sale.saleDate | date }}</p>
+      <p><strong>Cliente:</strong> {{ sale.customerName }}</p>
+      <p><strong>Filial:</strong> {{ sale.branch }}</p>
+      <p><strong>Status:</strong> {{ sale.isCancelled ? 'Cancelada' : 'Ativa' }}</p>
+      <p><strong>Total:</strong> R$ {{ sale.totalAmount | number: '1.2-2' }}</p>
+      <p><strong>Criada em:</strong> {{ sale.createdAt | date:'short' }}</p>
+      <p *ngIf="sale.updatedAt"><strong>Atualizada em:</strong> {{ sale.updatedAt | date:'short' }}</p>
+    </div>
+
+    <mat-divider></mat-divider>
+
+    <h3 style="margin-top: 1.5rem;">Itens da Venda</h3>
+    <mat-list>
+      <mat-list-item *ngFor="let item of sale.items">
+        <div class="item-details">
+          <p><strong>{{ item.productDetails.title }}</strong></p>
+          <p>
+            Quantidade: {{ item.quantity }} | Preço: R$ {{ item.unitPrice }} |
+            Desconto: {{ item.discount }}% | Total: R$ {{ item.totalAmount }}
+          </p>
+          <p>
+            Categoria: {{ item.productDetails.category }} |
+            Preço Produto: {{ item.productDetails.price }} |
+            Imagem: {{ item.productDetails.image }}
+          </p>
+        </div>
+      </mat-list-item>
+    </mat-list>
+  </div>
+
+</mat-card>
+<div class="actions">
+  <button mat-stroked-button color="primary" [routerLink]="['/sales']">
+    🔙 Voltar para Listagem
+  </button>
+</div>

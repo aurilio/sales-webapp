@@ -1,0 +1,20 @@
+.sale-item-form {
+  margin-bottom: 1rem;
+
+  .item-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 0.5rem 1rem; // ⬅️ 0.5rem entre linhas (vertical), 1rem entre colunas (horizontal)
+    margin-top: 0.5rem;
+  }
+
+  mat-form-field {
+    margin-bottom: 0; // remove qualquer espaço extra indesejado
+  }
+
+  mat-card-actions {
+    margin-top: 0.75rem;
+    display: flex;
+    justify-content: flex-end;
+  }
+}

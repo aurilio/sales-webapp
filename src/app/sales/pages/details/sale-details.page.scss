@@ -1,0 +1,24 @@
+.sale-details {
+    margin-top: 1rem;
+  
+    .sale-info p {
+      margin: 0.25rem 0;
+    }
+  
+    .item-details {
+      font-size: 0.95rem;
+      padding: 0.5rem 0;
+      border-bottom: 1px solid #eee;
+    }
+  
+    mat-list-item {
+      padding-left: 0;
+    }
+  }
+
+  
+  .actions {
+    margin-top: 2rem;
+    display: flex;
+    justify-content: flex-end;
+  }

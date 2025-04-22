@@ -1,0 +1,22 @@
+<div class="home-container">
+  <mat-card>
+    <mat-card-title>Simulação de Endpoints - Sale</mat-card-title>
+    <mat-card-content>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" (click)="createSale()">Criar Venda</button>
+
+        <div class="input-group">
+          <mat-form-field appearance="fill" style="width: 100%;">
+            <mat-label>Buscar Venda por ID</mat-label>
+            <input matInput [(ngModel)]="saleId" placeholder="Informe o ID">
+          </mat-form-field>
+          <button mat-stroked-button color="accent" (click)="getSale()">Buscar</button>
+        </div>
+
+        <button mat-raised-button color="primary" (click)="goToList()">Listar vendas</button>
+      </div>
+
+    </mat-card-content>
+  </mat-card>
+</div>

@@ -1,0 +1,50 @@
+<mat-card class="sale-item-form" [formGroup]="item">
+  <mat-card-title class="sale-item-form">Item {{ index + 1 }}</mat-card-title>
+  <mat-card-content>
+    <div class="item-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Produto (ID)</mat-label>
+        <input matInput formControlName="productId" />
+        <mat-error *ngIf="item.get('productId')?.hasError('required')">
+          O campo Produto é obrigatório.
+        </mat-error>
+        <mat-error *ngIf="item.get('productId')?.hasError('pattern')">
+          O ID do produto deve ser um GUID válido.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Quantidade</mat-label>
+        <input matInput type="number" formControlName="quantity" />
+      </mat-form-field>
+    </div>
+
+    <div formGroupName="productDetails" class="item-grid">
+      <mat-form-field appearance="fill">
+        <mat-label>Nome</mat-label>
+        <input matInput formControlName="title" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Categoria</mat-label>
+        <input matInput formControlName="category" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Preço</mat-label>
+        <input matInput type="number" formControlName="price" />
+      </mat-form-field>
+
+      <mat-form-field appearance="fill">
+        <mat-label>Imagem</mat-label>
+        <input matInput formControlName="image" />
+      </mat-form-field>
+    </div>
+  </mat-card-content>
+
+  <mat-card-actions align="end">
+    <button mat-stroked-button color="warn" type="button" (click)="remove.emit(index)">
+      Remover Item
+    </button>
+  </mat-card-actions>
+</mat-card>
