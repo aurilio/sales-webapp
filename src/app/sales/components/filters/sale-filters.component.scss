@@ -1,0 +1,51 @@
+.filters-card {
+    padding: 0.5rem 1rem;
+  
+    mat-card-title {
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+    }
+  }
+  
+  .filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 0.4rem;
+  }
+  
+  .filters-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+    margin-top: 0.5rem;
+  }
+  
+  ::ng-deep .mat-form-field.dense {
+    margin-bottom: 0.2rem;
+  
+    .mat-form-field-wrapper {
+      padding-bottom: 0;
+    }
+  
+    .mat-form-field-flex {
+      height: 26px;
+      font-size: 11px;
+    }
+  
+    .mat-form-field-infix {
+      padding: 0 0.25rem;
+    }
+  
+    input.mat-input-element,
+    select.mat-select-element {
+      padding: 0;
+      height: 16px;
+      font-size: 11px;
+    }
+  
+    mat-label {
+      font-size: 10px;
+      top: -0.7rem;
+    }
+  }
+  

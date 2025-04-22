@@ -1,13 +1,33 @@
 import { Routes } from '@angular/router';
-import { HomePage } from './home/pages/home.page';
-import { SaleListPage } from './sales/pages/list/sale-list.page';
-import { SaleFormPage } from './sales/pages/form/sale-form.page';
-import { SaleDetailsPage } from './sales/pages/details/sale-details.page';
+import { ShellComponent } from './layout/shell/shell.component';
 
 export const routes: Routes = [
-  { path: '', component: HomePage },
-  { path: 'sales', component: SaleListPage },
-  { path: 'sales/new', component: SaleFormPage },
-  { path: 'sales/edit/:id', component: SaleFormPage },
-  { path: 'sales/details/:id', component: SaleDetailsPage }
+  {
+    path: '',
+    component: ShellComponent,
+    children: [
+      {
+        path: '',
+        loadComponent: () => import('./home/pages/home.page').then(m => m.HomePage)
+      },
+      {
+        path: 'sales',
+        loadComponent: () => import('./sales/pages//list/sale-list.page').then(m => m.SaleListPage)
+      },
+      {
+        path: 'sales/new',
+        loadComponent: () => import('./sales/pages/form/sale-form.page').then(m => m.SaleFormPage)
+      },
+      {
+        path: 'sales/edit/:id',
+        loadComponent: () => import('./sales/pages/form/sale-form.page').then(m => m.SaleFormPage)
+      },
+      {
+        path: 'sales/details/:id',
+        loadComponent: () => import('./sales/pages/details/sale-details.page').then(m => m.SaleDetailsPage)
+      }
+    ]
+  },
+  { path: '**', redirectTo: '' }
 ];
+

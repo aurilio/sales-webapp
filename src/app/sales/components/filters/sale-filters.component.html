@@ -1,61 +1,57 @@
-<h3>Filtros</h3>
+<mat-card class="filters-card">
+  <mat-card-title>Filtros</mat-card-title>
 
-<div style="display: flex; flex-wrap: wrap; gap: 1rem; margin-bottom: 1rem;">
-  <div>
-    <label for="customerName">Cliente</label><br />
-    <input
-      id="customerName"
-      type="text"
-      [(ngModel)]="customerName"
-      placeholder="Nome do cliente"
-    />
+  <div class="filters-grid">
+    <mat-form-field appearance="outline" class="dense">
+      <mat-label>Cliente</mat-label>
+      <input matInput [(ngModel)]="customerName" placeholder="Nome do cliente" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="dense">
+      <mat-label>Filial</mat-label>
+      <input matInput [(ngModel)]="branch" placeholder="Filial" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="dense">
+      <mat-label>Valor Mínimo (R$)</mat-label>
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="minTotalAmount"
+        placeholder="Ex: 100"
+        min="0"
+        step="0.01"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="dense">
+      <mat-label>Valor Máximo (R$)</mat-label>
+      <input
+        matInput
+        type="number"
+        [(ngModel)]="maxTotalAmount"
+        placeholder="Ex: 500"
+        min="0"
+        step="0.01"
+      />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="dense">
+      <mat-label>Status</mat-label>
+      <mat-select [(ngModel)]="isCancelled">
+        <mat-option value="">Todos</mat-option>
+        <mat-option value="true">Cancelada</mat-option>
+        <mat-option value="false">Ativa</mat-option>
+      </mat-select>
+    </mat-form-field>
   </div>
 
-  <div>
-    <label for="branch">Filial</label><br />
-    <input
-      id="branch"
-      type="text"
-      [(ngModel)]="branch"
-      placeholder="Filial"
-    />
+  <div class="filters-actions">
+    <button mat-raised-button color="primary" (click)="applyFilters()">
+      🔎 Aplicar Filtros
+    </button>
+    <button mat-stroked-button color="warn" (click)="clearFilters()">
+      🧹 Limpar Filtros
+    </button>
   </div>
-
-  <div>
-    <label for="minAmount">Valor Mínimo (R$)</label><br />
-    <input
-      id="minAmount"
-      type="number"
-      [(ngModel)]="minTotalAmount"
-      placeholder="Ex: 100"
-      min="0"
-      step="0.01"
-    />
-  </div>
-
-  <div>
-    <label for="maxAmount">Valor Máximo (R$)</label><br />
-    <input
-      id="maxAmount"
-      type="number"
-      [(ngModel)]="maxTotalAmount"
-      placeholder="Ex: 500"
-      min="0"
-      step="0.01"
-    />
-  </div>
-
-  <div>
-    <label for="isCancelled">Status</label><br />
-    <select id="isCancelled" [(ngModel)]="isCancelled">
-      <option value="">Todos</option>
-      <option value="true">Cancelada</option>
-      <option value="false">Ativa</option>
-    </select>
-  </div>
-</div>
-
-<div style="display: flex; gap: 1rem;">
-  <button (click)="applyFilters()">🔎 Aplicar Filtros</button>
-  <button (click)="clearFilters()">🧹 Limpar Filtros</button>
-</div>
+</mat-card>

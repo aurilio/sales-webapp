@@ -1,55 +1,66 @@
-<h1>{{ isEditMode ? 'Editar' : 'Nova' }} Venda</h1>
+<mat-card>
+  <mat-card-title class="form-title">{{ isEditMode ? 'Editar' : 'Nova' }} Venda</mat-card-title>
+  <mat-card-content>
+    <form [formGroup]="form" (ngSubmit)="save()" class="sale-form">
+      <div class="form-grid">
+        <mat-form-field appearance="fill">
+          <mat-label>Número da Venda</mat-label>
+          <input matInput formControlName="saleNumber" />
+        </mat-form-field>
 
-<app-back-to-home-button></app-back-to-home-button>
+        <mat-form-field appearance="fill">
+          <mat-label>Data da Venda</mat-label>
+          <input matInput type="date" formControlName="saleDate" />
+        </mat-form-field>
 
-<form [formGroup]="form" (ngSubmit)="save()">
-  <div>
-    <label>Número da Venda:</label>
-    <input formControlName="saleNumber" />
-  </div>
+        <mat-form-field appearance="fill">
+          <mat-label>Cliente (ID)</mat-label>
+          <input matInput formControlName="customerId" />
+        </mat-form-field>
 
-  <div>
-    <label>Data da Venda:</label>
-    <input type="date" formControlName="saleDate" />
-  </div>
+        <mat-form-field appearance="fill">
+          <mat-label>Nome do Cliente</mat-label>
+          <input matInput formControlName="customerName" />
+        </mat-form-field>
 
-  <div>
-    <label>Cliente (ID):</label>
-    <input formControlName="customerId" />
-  </div>
-  
-  <div>
-    <label>Nome do Cliente:</label>
-    <input formControlName="customerName" />
-  </div>
+        <mat-form-field appearance="fill">
+          <mat-label>Filial</mat-label>
+          <input matInput formControlName="branch" />
+        </mat-form-field>
 
-  <div>
-    <label>Filial:</label>
-    <input formControlName="branch" />
-  </div>
-
-  <div *ngIf="isEditMode">
-    <label>Cancelada:</label>
-    <input type="checkbox" formControlName="isCancelled" />
-  </div>
-
-  <hr />
-
-  <h3>Itens da Venda</h3>
-  <div formArrayName="items">
-    <ng-container *ngFor="let item of items; let i = index">
-      <div *ngIf="item instanceof FormGroup">
-        <app-sale-item-form
-          [item]="item"
-          [index]="i"
-          (remove)="removeItem($event)">
-        </app-sale-item-form>
+        <mat-checkbox *ngIf="isEditMode" formControlName="isCancelled">
+          Cancelada
+        </mat-checkbox>
       </div>
-    </ng-container>
-  </div>
 
-  <button type="button" (click)="addItem()">Adicionar Item</button>
+      <mat-card-title class="form-title">Itens da Venda</mat-card-title>
 
-  <br /><br />
-  <button type="submit">{{ isEditMode ? 'Atualizar' : 'Salvar' }}</button>
-</form>
+      <div formArrayName="items" class="items-container">
+        <ng-container *ngFor="let item of items; let i = index">
+          <div *ngIf="item instanceof FormGroup">
+            <app-sale-item-form
+              [item]="item"
+              [index]="i"
+              (remove)="removeItem($event)">
+            </app-sale-item-form>
+          </div>
+        </ng-container>
+      </div>
+
+      <div class="actions">
+        <button mat-button type="button" color="primary" (click)="addItem()">
+          ➕ Adicionar Item
+        </button>
+      </div>
+
+      <div class="actions">
+        <button mat-raised-button color="primary" type="submit">
+          {{ isEditMode ? 'Atualizar' : 'Salvar' }}
+        </button>
+        <button mat-button type="button" (click)="cancel()">
+          Cancelar
+        </button>
+      </div>
+    </form>
+  </mat-card-content>
+</mat-card>
