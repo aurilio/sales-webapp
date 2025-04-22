@@ -1,0 +1,27 @@
+.full-width-table {
+    width: 100%;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+  
+  .pagination {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+    margin-top: 1rem;
+  }
+  
+  .error-card {
+    background-color: #ffebee;
+    color: #c62828;
+  }
+  
+  .text-danger {
+    color: #c62828;
+  }
+  
+  .text-success {
+    color: #2e7d32;
+  }
+  

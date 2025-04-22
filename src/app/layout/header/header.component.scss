@@ -1,0 +1,25 @@
+.app-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #111827;
+    color: #fff;
+    padding: 1rem 2rem;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  
+    .logo h1 {
+      margin: 0;
+      font-size: 1.5rem;
+    }
+  
+    .main-nav a {
+      color: #fff;
+      margin-left: 1rem;
+      text-decoration: none;
+  
+      &:hover {
+        text-decoration: underline;
+      }
+    }
+  }
+  

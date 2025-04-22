@@ -1,0 +1,16 @@
+<div class="modal-overlay" *ngIf="modalState$ | async as modal" [class.show]="modal.open">
+    <div class="modal">
+      <h2 *ngIf="modal.title">{{ modal.title }}</h2>
+      <p *ngIf="modal.message">{{ modal.message }}</p>
+  
+      <div class="modal-actions">
+        <button (click)="cancel()">
+          {{ modal.cancelText || 'Cancelar' }}
+        </button>
+        <button (click)="confirm()" class="confirm">
+          {{ modal.confirmText || 'Confirmar' }}
+        </button>
+      </div>
+    </div>
+  </div>
+  

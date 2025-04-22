@@ -1,0 +1,31 @@
+.app-sidebar {
+    width: 220px;
+    background-color: #1f2937;
+    color: #ffffff;
+    height: 100%;
+    padding: 2rem 1rem;
+  
+    nav ul {
+      list-style: none;
+      padding: 0;
+  
+      li {
+        margin-bottom: 1rem;
+  
+        a {
+          color: #ffffff;
+          text-decoration: none;
+          font-weight: 500;
+          display: block;
+  
+          &:hover,
+          &.active {
+            background-color: #374151;
+            padding: 0.5rem;
+            border-radius: 4px;
+          }
+        }
+      }
+    }
+  }
+  

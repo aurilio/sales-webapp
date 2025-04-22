@@ -32,6 +32,7 @@ export class SaleService {
   }
 
   create(sale: CreateSaleRequest): Observable<Sale> {
+    console.log('Payload enviado:', sale);
     return this.http.post<Sale>(this.baseUrl, sale);
   }
 

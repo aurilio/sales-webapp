@@ -4,41 +4,51 @@ import { ActivatedRoute } from '@angular/router';
 import { SaleService } from '../../services/sale.service';
 import { Sale } from '../../models/sale.model';
 import { RouterModule } from '@angular/router';
-import { BackToHomeButtonComponent } from '../../../shared/components/back-to-home-button.component';
+import { ToastService } from '../../../shared/services/toast.service';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatListModule } from '@angular/material/list';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-sale-details',
   standalone: true,
-  imports: [CommonModule, RouterModule, BackToHomeButtonComponent],
+  imports: [
+    CommonModule,
+    RouterModule,
+    MatCardModule,
+    MatDividerModule,
+    MatListModule,
+    MatButtonModule
+  ],
   templateUrl: './sale-details.page.html',
   styleUrls: ['./sale-details.page.scss']
 })
 export class SaleDetailsPage implements OnInit {
   sale?: Sale;
-  isLoading = true;
   errorMessage = '';
 
   constructor(
     private route: ActivatedRoute,
-    private saleService: SaleService
+    private saleService: SaleService,
+    private toastService: ToastService
   ) {}
 
   ngOnInit(): void {
     const id = this.route.snapshot.paramMap.get('id');
     if (!id) {
       this.errorMessage = 'ID da venda não informado.';
-      this.isLoading = false;
+      this.toastService.show('ID da venda não informado');
       return;
     }
 
     this.saleService.getById(id).subscribe({
       next: (sale) => {
         this.sale = sale;
-        this.isLoading = false;
       },
       error: (err) => {
         this.errorMessage = 'Erro ao carregar os detalhes da venda.';
-        this.isLoading = false;
+        this.toastService.show('Erro ao carregar os detalhes da venda');
         console.error(err);
       }
     });

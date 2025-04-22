@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { take } from 'rxjs';
 import {
   FormBuilder,
   FormGroup,
@@ -10,12 +11,19 @@ import {
 import { ActivatedRoute, Router, RouterModule } from '@angular/router';
 import { Observable } from 'rxjs';
 
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatButtonModule } from '@angular/material/button';
+
 import { SaleService } from '../../services/sale.service';
 import { Sale } from '../../models/sale.model';
 import { UpdateSaleRequest } from '../../models/update-sale-request.model';
 import { CreateSaleRequest } from '../../models/create-sale-request.model';
-import { SaleItemFormComponent } from '../../components/sale-item-form.component';
-import { BackToHomeButtonComponent } from '../../../shared/components/back-to-home-button.component';
+import { SaleItemFormComponent } from '../../components/sale-item/sale-item-form.component';
+import { ToastService } from '../../../shared/services/toast.service';
+import { ModalService } from '../../../shared/services/modal.service';
 
 @Component({
   selector: 'app-sale-form',
@@ -25,7 +33,12 @@ import { BackToHomeButtonComponent } from '../../../shared/components/back-to-ho
     ReactiveFormsModule,
     RouterModule,
     SaleItemFormComponent,
-    BackToHomeButtonComponent
+
+    MatCardModule,
+    MatFormFieldModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatButtonModule
   ],
   templateUrl: './sale-form.page.html',
   styleUrls: ['./sale-form.page.scss']
@@ -39,7 +52,9 @@ export class SaleFormPage implements OnInit {
     private fb: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
-    private saleService: SaleService
+    private saleService: SaleService,
+    private toastService: ToastService,
+    private modalService: ModalService
   ) {}
 
   ngOnInit(): void {
@@ -104,13 +119,17 @@ export class SaleFormPage implements OnInit {
       },
       error: err => {
         console.error('Erro ao carregar venda:', err);
+        this.toastService.show('Erro ao carregar venda');
       }
     });
   }
 
   addItem(): void {
     const itemForm = this.fb.group({
-      productId: ['', Validators.required],
+      productId: ['', [
+        Validators.required,
+        Validators.pattern('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
+      ]],
       quantity: [1, [Validators.required, Validators.min(1), Validators.max(20)]],
       productDetails: this.fb.group({
         title: [''],
@@ -128,8 +147,9 @@ export class SaleFormPage implements OnInit {
   }
 
   save(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.itemsArray.invalid) {
       this.form.markAllAsTouched();
+      this.toastService.show('Preencha corretamente os campos da venda.');
       return;
     }
 
@@ -156,17 +176,49 @@ export class SaleFormPage implements OnInit {
         branch: raw.branch,
         items: raw.items
       };
+
       request$ = this.saleService.create(createSale);
     }
 
     request$.subscribe({
       next: () => {
-        console.log('Venda salva com sucesso');
+        this.toastService.show('Venda salva com sucesso');
         this.router.navigate(['/sales']);
       },
       error: err => {
         console.error('Erro ao salvar venda:', err);
+        this.toastService.show('Erro ao salvar venda');
       }
     });
+  }
+
+  cancel(): void {
+    if (!this.form.dirty) {
+      this.navigateBack();
+      return;
+    }
+  
+    this.modalService.open({
+      title: 'Sair sem salvar',
+      message: 'Você tem alterações não salvas. Deseja realmente sair?',
+      confirmText: 'Sim, sair',
+      cancelText: 'Permanecer'
+    });
+  
+    this.modalService.confirmResult$
+      .pipe(take(1))
+      .subscribe((confirmed) => {
+        if (confirmed) {
+          this.navigateBack();
+        }
+      });
+  }
+  
+  private navigateBack(): void {
+    if (this.isEditMode) {
+      this.router.navigate(['/sales']);
+    } else {
+      this.router.navigate(['/']);
+    }
   }
 }
