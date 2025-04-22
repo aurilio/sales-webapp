@@ -31,20 +31,27 @@ ng serve
 
 Once the server is running, open your browser and navigate to `http://localhost:4200/`. The application will automatically reload whenever you modify any of the source files.
 
-## 🐳 Executar via Docker (imagem pronta no Docker Hub)
+## 🐳 Run via Docker (pre-built image on Docker Hub)## 🐳 Run via Docker (pre-built image on Docker Hub)
 
-Se você deseja rodar a aplicação sem precisar clonar o repositório ou fazer o build manual, basta usar a imagem Docker já publicada:
+### Steps
 
-### 📥 Baixar e executar a imagem
+**Clone the repository:**
 
 ```bash
-docker run -d -p 4200:80 --name sales-webapp aurilio/saleapi:latest
+git clone https://github.com/aurilio/sales-api.git
 
+cd sales-api/docker
+
+docker compose up
 ```
 
-🌐 Acessar a aplicação
-Abra o navegador e acesse:
+
+Access the application
+Open your browser and navigate to:
+
 ```bash
-http://localhost:4200
+
+Swagger (API)	http://localhost:8080/swagger/index.html
+Frontend (UI)	http://localhost:4200 - already integrated with the API
 
 ```
