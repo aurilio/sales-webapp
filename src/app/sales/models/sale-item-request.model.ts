@@ -1,4 +1,5 @@
 export interface SaleItemRequest {
+    id: string;
     productId: string;
     quantity: number;
     productDetails: {
