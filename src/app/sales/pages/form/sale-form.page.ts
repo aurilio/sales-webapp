@@ -49,7 +49,7 @@ export class SaleFormPage implements OnInit {
   saleId: string = '';
 
   constructor(
-    private fb: FormBuilder,
+    private formBuilder: FormBuilder,
     private route: ActivatedRoute,
     private router: Router,
     private saleService: SaleService,
@@ -71,14 +71,14 @@ export class SaleFormPage implements OnInit {
   }
 
   private initForm(): void {
-    this.form = this.fb.group({
+    this.form = this.formBuilder.group({
       saleNumber: ['', Validators.required],
       saleDate: ['', Validators.required],
       customerId: ['', Validators.required],
       customerName: [''],
       branch: ['', Validators.required],
       isCancelled: [false],
-      items: this.fb.array([])
+      items: this.formBuilder.array([])
     });
   }
 
@@ -103,10 +103,11 @@ export class SaleFormPage implements OnInit {
         });
 
         sale.items.forEach(item => {
-          const itemForm = this.fb.group({
+          const itemForm = this.formBuilder.group({
+            id: [item.id],
             productId: [item.productId],
             quantity: [item.quantity],
-            productDetails: this.fb.group({
+            productDetails: this.formBuilder.group({
               title: [item.productDetails.title],
               category: [item.productDetails.category],
               price: [item.productDetails.price],
@@ -125,13 +126,13 @@ export class SaleFormPage implements OnInit {
   }
 
   addItem(): void {
-    const itemForm = this.fb.group({
+    const itemForm = this.formBuilder.group({
       productId: ['', [
         Validators.required,
         Validators.pattern('^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$')
       ]],
       quantity: [1, [Validators.required, Validators.min(1), Validators.max(20)]],
-      productDetails: this.fb.group({
+      productDetails: this.formBuilder.group({
         title: [''],
         category: [''],
         price: [0],
